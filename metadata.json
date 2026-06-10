@@ -1,0 +1,11 @@
+{
+  "name": "Remix: Remix: Remix: Remix: Remix: Remix: BYD Horizon Club",
+  "description": "Simulated electric vehicle membership and investment platform with interactive delivery maps, referral systems, rewards store, and admin controls.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
