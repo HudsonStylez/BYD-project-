@@ -61,6 +61,17 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   const [showEmailCenter, setShowEmailCenter] = useState<boolean>(false);
   const [selectedEmail, setSelectedEmail] = useState<DispatchEmail | null>(null);
   const [emailAlert, setEmailAlert] = useState<string | null>(null);
+  
+  // High fidelity features
+  const [activeWeather, setActiveWeather] = useState<"clear" | "rain" | "blizzard" | "heatwave">("clear");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminToken = localStorage.getItem("byd_horizon_admin_token");
+    if (adminToken) {
+      setIsAdmin(true);
+    }
+  }, []);
 
   // Synchronize with external index from DB when it mounts or updates
   useEffect(() => {
@@ -151,7 +162,15 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
   // Dynamic speed & ETA calculation
   const remainingMiles = Math.max(0, Math.round(totalMiles * (1 - simIndex / 100)));
-  const currentSpeed = simIndex === 100 ? 0 : Math.round(68 + Math.sin(simIndex) * 3);
+  
+  const getWeatherSpeedOffset = () => {
+    if (activeWeather === "rain") return -18;
+    if (activeWeather === "blizzard") return -36;
+    if (activeWeather === "heatwave") return -6;
+    return 0;
+  };
+
+  const currentSpeed = simIndex === 100 ? 0 : Math.max(22, Math.round(68 + Math.sin(simIndex) * 3 + getWeatherSpeedOffset()));
   
   const calculateETA = () => {
     if (simIndex === 100) return { days: 0, hours: 0, minutes: 0, text: "ARRIVED & CHECKED IN" };
@@ -373,6 +392,38 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
       opacity: 0.85,
     }).addTo(mapInstanceRef.current);
 
+    // Interactive logistics checkpoint landmarks
+    const checkpointLocations = [
+      { coords: [startLat, startLng], label: "Port of Los Angeles - Primary Dispatch Gate", color: "#10B981" },
+      { coords: [36.1699, -115.1398], label: "Las Vegas High-Speed Supercharge Base", color: "#00E5FF" },
+      { coords: [39.7392, -104.9903], label: "Denver Rocky Mountain Advanced Logistics Station", color: "#8B5CF6" },
+      { coords: [39.0997, -94.5786], label: "Kansas City Transit Hold & Cargo Registry", color: "#F59E0B" },
+      { coords: [endLat, endLng], label: `${destinationCity} Final Delivery Hub`, color: "#EF4444" }
+    ];
+
+    checkpointLocations.forEach((cp) => {
+      const cpIcon = L.divIcon({
+        html: `
+          <div class="relative flex items-center justify-center cursor-pointer">
+            <div class="absolute h-5 w-5 rounded-full" style="background: ${cp.color}; opacity: 0.2; animation: ping 2.5s infinite;"></div>
+            <div class="h-3 w-3 rounded-full border border-white" style="background: ${cp.color}; box-shadow: 0 0 8px ${cp.color}"></div>
+          </div>
+        `,
+        className: "checkpoint-div-icon",
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      L.marker(cp.coords, { icon: cpIcon })
+        .addTo(mapInstanceRef.current)
+        .bindPopup(`
+          <div class="p-2 text-white font-mono text-[9px] bg-slate-950 border border-slate-800 rounded-lg min-w-[140px]" style="font-family: inherit;">
+            <strong style="color: ${cp.color};" class="block text-[10px] uppercase tracking-wider mb-1">■ CLOUD CHECKPOINT</strong>
+            <div class="text-slate-300 font-sans leading-relaxed">${cp.label}</div>
+          </div>
+        `);
+    });
+
     // Dynamic Customized glowing vehicle marker
     const customIcon = L.divIcon({
       html: `
@@ -503,13 +554,50 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full select-none" id="leaflet-active-map-container">
+    <div className="relative w-full h-full select-none text-left" id="leaflet-active-map-container">
+      {/* Visual Keyframe Animations for Atmospheric Weather Effects */}
+      <style>{`
+        @keyframes rainSweep {
+          0% { background-position: 0px 0px; }
+          100% { background-position: -150px 1200px; }
+        }
+        @keyframes snowDrift {
+          0% { background-position: 0px 0px; }
+          100% { background-position: 100px 600px; }
+        }
+        .animate-rain-layer {
+          animation: rainSweep 0.7s linear infinite;
+        }
+        .animate-snow-layer {
+          animation: snowDrift 3.5s linear infinite;
+        }
+      `}</style>
+
       {/* Real Leaflet Map */}
       <div ref={mapContainerRef} className="w-full h-full min-h-[300px] rounded-2xl outline-none overflow-hidden" />
       
+      {/* Atmospheric Climate Particle Canvas Renderers */}
+      {activeWeather === "rain" && (
+        <div className="absolute inset-0 pointer-events-none z-[350] rounded-2xl overflow-hidden bg-cyan-950/5 mix-blend-color-dodge">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E5FF]/[0.02] to-transparent animate-pulse" />
+          <div className="absolute inset-0 opacity-40 animate-rain-layer" style={{ backgroundImage: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'120\' viewBox=\'0 0 60 120\'><line x1=\'15\' y1=\'10\' x2=\'8\' y2=\'45\' stroke=\'%2300E5FF\' stroke-width=\'1.2\' opacity=\'0.35\'/><line x1=\'40\' y1=\'60\' x2=\'32\' y2=\'95\' stroke=\'%2300E5FF\' stroke-width=\'1.2\' opacity=\'0.35\'/></svg>")' }} />
+        </div>
+      )}
+
+      {activeWeather === "blizzard" && (
+        <div className="absolute inset-0 pointer-events-none z-[350] rounded-2xl overflow-hidden bg-blue-950/15 backdrop-contrast-[1.04]">
+          <div className="absolute inset-0 bg-white/[0.03] mix-blend-overlay animate-pulse" />
+          <div className="absolute inset-0 opacity-45 animate-snow-layer" style={{ backgroundImage: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'><circle cx=\'15\' cy=\'15\' r=\'1.8\' fill=\'%23FFFFFF\' opacity=\'0.45\'/><circle cx=\'55\' cy=\'45\' r=\'2.2\' fill=\'%23FFFFFF\' opacity=\'0.45\'/><circle cx=\'35\' cy=\'65\' r=\'1.2\' fill=\'%23FFFFFF\' opacity=\'0.3\'/></svg>")' }} />
+        </div>
+      )}
+
+      {activeWeather === "heatwave" && (
+        <div className="absolute inset-0 pointer-events-none z-[350] rounded-2xl overflow-hidden bg-amber-500/[0.03] shadow-[inset_0_0_90px_rgba(245,158,11,0.2)] animate-pulse" />
+      )}
+
       {/* Left Top Float telemetry badge */}
-      <div className="absolute top-4 left-4 z-[400] bg-slate-950/90 backdrop-blur-md border border-slate-850/80 px-3 py-1.5 rounded-xl text-[9px] font-mono uppercase tracking-widest text-slate-300 flex items-center space-x-2 shadow-2xl">
-        <span className="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+      <div className="absolute top-4 left-4 z-[400] bg-slate-950/90 backdrop-blur-md border border-slate-850 px-3 py-1.5 rounded-xl text-[9px] font-mono uppercase tracking-widest text-slate-300 flex items-center space-x-2 shadow-2xl">
+        <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
         <span className="font-bold text-white tracking-widest leading-none">GPS TELEMETRY ACTIVE</span>
       </div>
 
@@ -526,26 +614,52 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
         </div>
       )}
 
-      {/* Floating Speed, ETA & Distance Dashboard Overlay (Left Column Center) */}
+      {/* Floating Speed, ETA & Distance Dashboard Overlay (Right Side Column) */}
       <div className="absolute top-4 right-4 z-[400] flex flex-col space-y-2 max-w-[220px]">
         {/* Email Tracking Center Trigger Button */}
         <button
           onClick={() => setShowEmailCenter(!showEmailCenter)}
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-950 border border-slate-800 text-[10px] font-mono font-bold text-slate-200 shadow-2xl cursor-pointer transition-all"
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/95 hover:bg-slate-950 border border-slate-800 text-[10px] font-mono font-bold text-slate-200 shadow-2xl cursor-pointer transition-all shrink-0"
         >
           <span className="flex items-center space-x-1.5">
             <Mail className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>EMAIL DISPATCH HUB</span>
+            <span className="font-bold">EMAIL DISPATCH</span>
           </span>
-          <span className="bg-cyan-500 text-black px-1.5 py-0.5 rounded font-extrabold text-[8px]">
+          <span className="bg-cyan-400 text-black px-1.5 py-0.5 rounded font-black text-[8px] font-mono">
             {emails.filter(e => e.hasBeenSent).length} SENT
           </span>
         </button>
 
+        {/* Climate & Weather Simulation Manager Modulator */}
+        <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 p-2.5 rounded-2xl shadow-2xl space-y-1.5">
+          <span className="text-[8px] text-slate-500 uppercase tracking-widest font-mono font-extrabold block">ENVIRONMENT CONTROLLER</span>
+          <div className="grid grid-cols-2 gap-1 font-sans text-[8.5px] font-bold">
+            {[
+              { id: "clear", label: "🌞 CLEAR" },
+              { id: "rain", label: "🌧️ RAIN" },
+              { id: "blizzard", label: "❄️ STORM" },
+              { id: "heatwave", label: "🔥 HEAT" }
+            ].map((we) => (
+              <button
+                key={we.id}
+                type="button"
+                onClick={() => setActiveWeather(we.id as any)}
+                className={`py-1 rounded text-center transition cursor-pointer select-none border ${
+                  activeWeather === we.id 
+                    ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-455 font-bold" 
+                    : "bg-slate-950/80 border-slate-850 text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {we.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Telemetry counters */}
         <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 p-3.5 rounded-2xl shadow-2xl space-y-2 text-left font-mono">
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-1.5 mb-1.5">
-            <span className="text-[8px] text-slate-500 uppercase tracking-widest font-extrabold">LIVE TELEMETRY</span>
+            <span className="text-[8px] text-slate-500 uppercase tracking-widest font-extrabold">LIVE METRICS</span>
             <Sparkles className="w-3 h-3 text-[#00E5FF]" />
           </div>
           <div className="flex justify-between items-center text-[10px]">
@@ -578,61 +692,70 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
       {/* Bottom Floating Simulation Live Controls Dock */}
       <div className="absolute bottom-4 left-4 right-4 z-[400] bg-slate-950/95 border border-slate-850 p-2.5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xl backdrop-blur-md">
         
-        {/* Playback Controls button layout */}
-        <div className="flex items-center space-x-2 self-start sm:self-center">
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`p-2 rounded-xl transition cursor-pointer border ${
-              isPlaying 
-                ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400" 
-                : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-850"
-            }`}
-            title={isPlaying ? "Pause simulated transit movement" : "Play simulated trans-continental motion"}
-          >
-            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-          </button>
+        {/* Conditionally Render Interactive controls if user is Admin, otherwise lock with beautiful explanation banner */}
+        {isAdmin ? (
+          <div className="flex items-center space-x-2 self-start sm:self-center">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`p-2 rounded-xl transition cursor-pointer border ${
+                isPlaying 
+                  ? "bg-cyan-500/10 border-cyan-400/40 text-cyan-400" 
+                  : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-850"
+              }`}
+              title={isPlaying ? "Pause simulated transit movement" : "Play simulated trans-continental motion"}
+            >
+              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+            </button>
 
-          {/* Speed trigger multipliers */}
-          <div className="flex items-center space-x-1.5 bg-slate-900 px-2 py-1.5 rounded-xl border border-slate-850/80">
-            <span className="text-[8px] text-slate-500 font-mono uppercase font-bold mr-1">Speed:</span>
-            {[1, 2, 5, 20].map((spd) => (
-              <button
-                key={spd}
-                onClick={() => setSimSpeed(spd)}
-                className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded transition cursor-pointer ${
-                  simSpeed === spd 
-                    ? "bg-[#00E5FF] text-black" 
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                {spd}x
-              </button>
-            ))}
+            {/* Speed trigger multipliers */}
+            <div className="flex items-center space-x-1.5 bg-slate-900 px-2 py-1.5 rounded-xl border border-slate-850/80">
+              <span className="text-[8px] text-slate-500 font-mono uppercase font-bold mr-1">Speed:</span>
+              {[1, 2, 5, 20].map((spd) => (
+                <button
+                  key={spd}
+                  onClick={() => setSimSpeed(spd)}
+                  className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded transition cursor-pointer ${
+                    simSpeed === spd 
+                      ? "bg-[#00E5FF] text-black" 
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {spd}x
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                setSimIndex(0);
+                // Reset dynamic emails sent flag except at index 0
+                setEmails((all) => all.map((m) => m.milestone === 0 ? m : { ...m, hasBeenSent: false }));
+                setIsPlaying(true);
+              }}
+              className="p-2 bg-slate-900 hover:bg-slate-850 border border-slate-800 rounded-xl text-slate-400 hover:text-slate-200 cursor-pointer transition"
+              title="Wipe & Reset transit index telemetry"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+
+            {/* User manual tracking alert developer trigger */}
+            <button
+              onClick={forcePushEmail}
+              className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-cyan-500/10 border border-slate-800 hover:border-cyan-400/35 text-slate-300 hover:text-cyan-400 font-mono text-[9px] font-bold flex items-center space-x-1.5 transition"
+              title="Dispatch manual tracking email"
+            >
+              <Mail className="w-3.5 h-3.5 text-cyan-400" />
+              <span>LOG DELPATCH</span>
+            </button>
           </div>
-
-          <button
-            onClick={() => {
-              setSimIndex(0);
-              // Reset dynamic emails sent flag except at index 0
-              setEmails((all) => all.map((m) => m.milestone === 0 ? m : { ...m, hasBeenSent: false }));
-              setIsPlaying(true);
-            }}
-            className="p-2 bg-slate-900 hover:bg-slate-850 border border-slate-800 rounded-xl text-slate-400 hover:text-slate-200 cursor-pointer transition"
-            title="Wipe & Reset transit index telemetry"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
-
-          {/* User manual tracking alert developer trigger */}
-          <button
-            onClick={forcePushEmail}
-            className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-cyan-500/10 border border-slate-800 hover:border-cyan-400/35 text-slate-300 hover:text-cyan-400 font-mono text-[9px] font-bold flex items-center space-x-1.5 transition"
-            title="Dispatch manual tracking email to stylez7065@gmail.com"
-          >
-            <Mail className="w-3.5 h-3.5 text-cyan-400" />
-            <span>FORCE DESPATCH</span>
-          </button>
-        </div>
+        ) : (
+          <div className="flex items-center space-x-2 text-slate-400 font-mono text-[9px] uppercase tracking-wide bg-slate-900/90 border border-slate-800/80 px-3 py-1.5 rounded-xl">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse inline-block shrink-0" />
+            <span className="text-amber-400 font-bold font-mono">SIMULATOR CONTROLS SECURED</span>
+            <span className="text-slate-600 font-light">|</span>
+            <span className="text-[8px] text-slate-400">Expedite actions restricted to verified System Administrators.</span>
+          </div>
+        )}
 
         {/* Progress Slider Track Line */}
         <div className="flex-1 w-full mx-2 font-mono flex items-center space-x-2">
@@ -643,18 +766,19 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
               min="0"
               max="100"
               value={simIndex}
+              disabled={!isAdmin}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
                 setSimIndex(val);
                 // retroactively mark emails as sent based on new index scrub
                 setEmails((all) => all.map((m) => ({ ...m, hasBeenSent: val >= m.milestone })));
               }}
-              className="w-full h-1.5 rounded-lg bg-slate-800 accent-[#00E5FF] cursor-pointer"
+              className={`w-full h-1.5 rounded-lg bg-slate-800 accent-[#00E5FF] ${isAdmin ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
             />
             {/* Pulsing indicator ratio dot */}
             <div 
               className="absolute pointer-events-none text-[8px] bg-[#00E5FF] text-black px-1.5 py-0.2 rounded font-extrabold shadow-[0_0_8px_rgba(0,229,255,0.7)]"
-              style={{ left: `calc(${simIndex}% - 12px)`, bottom: '15px' }}
+              style={{ left: `calc(${simIndex}% - 12px)`, bottom: '15.5px' }}
             >
               {simIndex}%
             </div>

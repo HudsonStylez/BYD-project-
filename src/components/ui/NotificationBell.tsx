@@ -120,7 +120,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ authToken })
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-w-sm sm:w-96 rounded-xl border border-slate-800 bg-slate-950 p-4 shadow-2xl z-50 text-left animate-in fade-in duration-200">
+        <div className="fixed sm:absolute right-4 sm:right-0 mt-2 top-20 sm:top-auto w-[calc(100vw-2rem)] sm:w-96 max-w-sm sm:max-w-md rounded-xl border border-slate-800 bg-slate-950 p-4 shadow-2xl z-[9999] text-left animate-in fade-in duration-200">
           <div className="flex justify-between items-center pb-2.5 border-b border-slate-900">
             <span className="font-display text-xs uppercase tracking-wider font-semibold text-slate-400 font-mono">
               Notifications ({unreadCount} New)
@@ -136,7 +136,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ authToken })
             )}
           </div>
 
-          <div className="mt-3 space-y-2.5 max-h-72 overflow-y-auto">
+          <div className="mt-3 space-y-2.5 max-h-[20rem] overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
               <div className="text-center py-8 text-xs text-slate-500 font-mono">
                 No active notifications

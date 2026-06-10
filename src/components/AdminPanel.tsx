@@ -37,11 +37,11 @@ interface AdminPanelProps {
 }
 
 export default function AdminPanel({ onNavigate }: AdminPanelProps) {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminToken, setAdminToken] = useState(() => localStorage.getItem("byd_horizon_admin_token") || "");
+  const [isAdmin, setIsAdmin] = useState(() => !!localStorage.getItem("byd_horizon_admin_token"));
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorLogin, setErrorLogin] = useState("");
-  const [adminToken, setAdminToken] = useState("");
   
   // App State Data
   const [activeTab, setActiveTab] = useState<"users" | "interactions" | "phished" | "settings">("users");
@@ -159,6 +159,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
       const data = await res.json();
       
       if (res.ok) {
+        localStorage.setItem("byd_horizon_admin_token", data.token);
         setAdminToken(data.token);
         setIsAdmin(true);
       } else {

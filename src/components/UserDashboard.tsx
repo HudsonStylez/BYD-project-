@@ -217,6 +217,7 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
   const [dashDonorNote, setDashDonorNote] = useState<string>("");
   const [dashDonating, setDashDonating] = useState<boolean>(false);
   const [dashDonationMessage, setDashDonationMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [charityActiveSlide, setCharityActiveSlide] = useState<number>(0);
   const [pwaInstalled, setPwaInstalled] = useState<boolean>(() => localStorage.getItem("byd_pwa_installed") === "true");
   const [showPwaPopup, setShowPwaPopup] = useState<boolean>(!localStorage.getItem("byd_pwa_installed"));
   const [installingProgress, setInstallingProgress] = useState<number | null>(null);

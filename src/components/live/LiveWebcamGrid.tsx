@@ -14,21 +14,21 @@ interface LiveWebcamGridProps {
 }
 
 const defaultWebcams: WebcamSource[] = [
-  { id: 1, name: "BYD Factory – Shenzhen Assembly Hub", video_url: "https://assets.mixkit.co/videos/preview/mixkit-automated-assembly-line-in-a-factory-42296-large.mp4", is_active: 1 },
-  { id: 2, name: "San Jose – Route 101 Carrier Lane", video_url: "https://assets.mixkit.co/videos/preview/mixkit-highway-traffic-at-night-42295-large.mp4", is_active: 1 },
-  { id: 3, name: "LA Charging station – Mega Charger", video_url: "https://assets.mixkit.co/videos/preview/mixkit-futuristic-subway-station-with-neon-lights-43187-large.mp4", is_active: 1 },
-  { id: 4, name: "Shanghai Port – Container Loading", video_url: "https://assets.mixkit.co/videos/preview/mixkit-highway-traffic-at-night-42295-large.mp4", is_active: 1 },
-  { id: 5, name: "BYD Design Lab – R&D Center", video_url: "https://assets.mixkit.co/videos/preview/mixkit-tech-futuristic-car-driving-through-a-highway-43288-large.mp4", is_active: 1 },
-  { id: 6, name: "Blade Battery Lab – Testing Bay 4", video_url: "https://assets.mixkit.co/videos/preview/mixkit-wind-turbine-turning-in-the-wind-42301-large.mp4", is_active: 1 },
-  { id: 7, name: "Yangwang U8 Offroad Trial Sandbox", video_url: "https://assets.mixkit.co/videos/preview/mixkit-tech-futuristic-car-driving-through-a-highway-43288-large.mp4", is_active: 1 },
-  { id: 8, name: "Paint Shop – Intelligent Robotic Spray", video_url: "https://assets.mixkit.co/videos/preview/mixkit-automated-assembly-line-in-a-factory-42296-large.mp4", is_active: 1 },
-  { id: 9, name: "Denza Assembly Station – Final Quality Control", video_url: "https://assets.mixkit.co/videos/preview/mixkit-automated-assembly-line-in-a-factory-42296-large.mp4", is_active: 1 },
-  { id: 10, name: "Inbound Port Clearance Carrier Depot", video_url: "https://assets.mixkit.co/videos/preview/mixkit-highway-traffic-at-night-42295-large.mp4", is_active: 1 },
-  { id: 11, name: "Aero Testing Center – Wind Tunnel", video_url: "https://assets.mixkit.co/videos/preview/mixkit-wind-turbine-turning-in-the-wind-42301-large.mp4", is_active: 1 },
-  { id: 12, name: "LFP Chemistry Synthesis - Tank Bay", video_url: "https://assets.mixkit.co/videos/preview/mixkit-automated-assembly-line-in-a-factory-42296-large.mp4", is_active: 1 },
-  { id: 13, name: "Seattle Transit Hub - Delivery Row b", video_url: "https://assets.mixkit.co/videos/preview/mixkit-highway-traffic-at-night-42295-large.mp4", is_active: 1 },
-  { id: 14, name: "BYD Silicon Valley Lab - Drive Core QC", video_url: "https://assets.mixkit.co/videos/preview/mixkit-tech-futuristic-car-driving-through-a-highway-43288-large.mp4", is_active: 1 },
-  { id: 15, name: "Dallas Freight Hub - Transit Line C", video_url: "https://assets.mixkit.co/videos/preview/mixkit-highway-traffic-at-night-42295-large.mp4", is_active: 1 }
+  { id: 1, name: "BYD Factory – Shenzhen Assembly Hub", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", is_active: 1 },
+  { id: 2, name: "San Jose – Route 101 Carrier Lane", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", is_active: 1 },
+  { id: 3, name: "LA Charging station – Mega Charger", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", is_active: 1 },
+  { id: 4, name: "Shanghai Port – Container Loading", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", is_active: 1 },
+  { id: 5, name: "BYD Design Lab – R&D Center", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", is_active: 1 },
+  { id: 6, name: "Blade Battery Lab – Testing Bay 4", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", is_active: 1 },
+  { id: 7, name: "Yangwang U8 Offroad Trial Sandbox", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", is_active: 1 },
+  { id: 8, name: "Paint Shop – Intelligent Robotic Spray", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", is_active: 1 },
+  { id: 9, name: "Denza Assembly Station – Quality Control", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", is_active: 1 },
+  { id: 10, name: "Inbound Port Clearance Carrier Depot", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", is_active: 1 },
+  { id: 11, name: "Aero Testing Center – Wind Tunnel", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", is_active: 1 },
+  { id: 12, name: "LFP Chemistry Synthesis - Tank Bay", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", is_active: 1 },
+  { id: 13, name: "Seattle Transit Hub - Delivery Row B", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", is_active: 1 },
+  { id: 14, name: "BYD Silicon Valley Lab - Drive Core QC", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", is_active: 1 },
+  { id: 15, name: "Dallas Freight Hub - Transit Line C", video_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", is_active: 1 }
 ];
 
 export const LiveWebcamGrid: React.FC<LiveWebcamGridProps> = ({ authToken }) => {
