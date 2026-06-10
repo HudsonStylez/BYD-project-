@@ -95,7 +95,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
   // Determine dynamic stats based on destination
   const getDestinationStats = () => {
-    const uCity = destinationCity.toLowerCase();
+    const uCity = (destinationCity || "").toLowerCase();
     let totalMiles = 2015; // default Chicago Hub
     let routesName = "I-80 East Transcontinental Express";
 
@@ -125,7 +125,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   const startLat = 33.7431;
   const startLng = -118.2673;
 
-  const uCity = destinationCity.toLowerCase();
+  const uCity = (destinationCity || "").toLowerCase();
   const endLat = uCity.includes("seattle") ? 47.6062 :
                 uCity.includes("new york") ? 40.7128 :
                 uCity.includes("san francisco") ? 37.7749 :
@@ -659,7 +659,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
               {simIndex}%
             </div>
           </div>
-          <span className="text-[9px] text-[#00E5FF] font-bold">{destinationCity.split(" ")[0].toUpperCase()}</span>
+          <span className="text-[9px] text-[#00E5FF] font-bold">{(destinationCity || "").split(" ")[0].toUpperCase()}</span>
         </div>
       </div>
 

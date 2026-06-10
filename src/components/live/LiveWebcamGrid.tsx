@@ -40,7 +40,7 @@ export const LiveWebcamGrid: React.FC<LiveWebcamGridProps> = ({ authToken }) => 
   const [activeCategory, setActiveCategory] = useState<"All" | "Manufacturing" | "Logistics" | "Research">("All");
 
   const getCamCategory = (camName: string): "Manufacturing" | "Logistics" | "Research" => {
-    const name = camName.toLowerCase();
+    const name = (camName || "").toLowerCase();
     if (name.includes("factory") || name.includes("assembly") || name.includes("paint") || name.includes("shop") || name.includes("assembly station")) {
       return "Manufacturing";
     }
@@ -175,7 +175,7 @@ export const LiveWebcamGrid: React.FC<LiveWebcamGridProps> = ({ authToken }) => 
                 <Monitor className="w-12 h-12 text-cyan-400/40 animate-pulse mb-3" />
                 <div className="space-y-1 z-10">
                   <h4 className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-widest">
-                    CCTV:{selectedCam?.name.split("–")[0].toUpperCase() || "MONITOR-OFFLINE"}
+                    CCTV:{selectedCam?.name?.split("–")[0].toUpperCase() || "MONITOR-OFFLINE"}
                   </h4>
                   <p className="text-[10px] text-slate-500 font-mono uppercase">
                     Signal standard route loop validation pending.

@@ -822,7 +822,7 @@ app.post("/api/dispatch/package", authenticateUser, async (req: any, res) => {
 
 // Update User settings (profile, wallet address, and privacy mode)
 app.post("/api/user/settings/update", authenticateUser, async (req: any, res) => {
-  const { name, phone, city, crypto_wallet_address, is_incognito, avatar_url, theme_color } = req.body;
+  const { name, phone, city, crypto_wallet_address, is_incognito, avatar_url, theme_color, user_currency } = req.body;
   if (!name) {
     return res.status(400).json({ error: "Name is a required field." });
   }
@@ -835,9 +835,9 @@ app.post("/api/user/settings/update", authenticateUser, async (req: any, res) =>
 
     await db.run(
       `UPDATE users 
-       SET name = ?, phone = ?, city = ?, crypto_wallet_address = ?, is_incognito = ?, avatar_url = ?, theme_color = ? 
+       SET name = ?, phone = ?, city = ?, crypto_wallet_address = ?, is_incognito = ?, avatar_url = ?, theme_color = ?, user_currency = ? 
        WHERE id = ?`,
-      [name, phone || "", city || "", crypto_wallet_address || "", incognitoVal, avatar_url || "", theme_color || "blue", req.user.id]
+      [name, phone || "", city || "", crypto_wallet_address || "", incognitoVal, avatar_url || "", theme_color || "blue", user_currency || "USD", req.user.id]
     );
 
     // Write log activity
@@ -2790,17 +2790,43 @@ Response MUST be valid raw JSON. No markdown backticks.`;
 });
 
 // Set specific/unlimited points reward override
-app.post("/api/admin/users/:userId/points", authenticateAdmin, async (req, res) => {
+app.post("/api/admin/users/:userId/points", authenticateAdmin, async (req: any, res) => {
   const { userId } = req.params;
-  const { points } = req.body;
+  const { points, reason, senderName } = req.body;
   if (points === undefined || typeof points !== "number") {
     return res.status(400).json({ error: "Points must be a valid numeric quantity" });
   }
   try {
     const db = await getDb();
+    
+    // Fetch user current currency and formatting
+    const user = await db.get("SELECT name, email, horizon_points, user_currency FROM users WHERE id = ?", [userId]);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const prevPoints = user.horizon_points || 0;
+    
+    // Update user horizon points (which is reward cash)
     await db.run("UPDATE users SET horizon_points = ? WHERE id = ?", [points, userId]);
-    await logAdminAction(`Mutated Points Balance for User ID ${userId} to: ${points} points`);
-    res.json({ success: true, message: `Points updated successfully to ${points}` });
+    
+    const change = points - prevPoints;
+    const currencySym = user.user_currency === "EUR" ? "€" : user.user_currency === "GBP" ? "£" : "$";
+    const changeAbs = Math.abs(change).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    let notifyMessage = "";
+    if (change >= 0) {
+      notifyMessage = `🎉 Award Notice: You've been granted ${currencySym}${changeAbs} Reward Cash! Reason: "${reason || 'Ecosystem Promotion'}" from Administrator "${senderName || 'BYD Global Operations'}"`;
+    } else {
+      notifyMessage = `⚠️ Adjustment Notice: Your Reward Cash balance has been written down by -${currencySym}${changeAbs} due to "${reason || 'System correction'}" by Administrator "${senderName || 'BYD Global Operations'}"`;
+    }
+    
+    // Insert official custom notification
+    await db.run(
+      "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
+      [userId, notifyMessage]
+    );
+
+    await logAdminAction(`Mutated Points Balance for User ID ${userId} to: ${points} points. Reason: ${reason}. Sender: ${senderName}`);
+    res.json({ success: true, message: `Reward cash balance updated successfully to ${points} for ${user.name}` });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

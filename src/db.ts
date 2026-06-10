@@ -499,6 +499,7 @@ export async function getDb() {
   await migrateCol("is_incognito", "INTEGER DEFAULT 0");
   await migrateCol("avatar_url", "TEXT DEFAULT ''");
   await migrateCol("theme_color", "TEXT DEFAULT 'blue'");
+  await migrateCol("user_currency", "TEXT DEFAULT 'USD'");
 
   try {
     await dbInstance!.exec(`ALTER TABLE map_tracking ADD COLUMN car_id INTEGER`);

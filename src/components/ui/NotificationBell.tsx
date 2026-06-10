@@ -81,10 +81,11 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ authToken })
   };
 
   const getIcon = (msg: string) => {
-    if (msg.toLowerCase().includes("delay") || msg.toLowerCase().includes("hold") || msg.toLowerCase().includes("alert")) {
+    const safeMsg = (msg || "").toLowerCase();
+    if (safeMsg.includes("delay") || safeMsg.includes("hold") || safeMsg.includes("alert")) {
       return <AlertTriangle className="w-4 h-4 text-amber-400" />;
     }
-    if (msg.toLowerCase().includes("welcome") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("complete")) {
+    if (safeMsg.includes("welcome") || safeMsg.includes("approved") || safeMsg.includes("complete")) {
       return <CheckCircle className="w-4 h-4 text-emerald-400" />;
     }
     return <Info className="w-4 h-4 text-blue-400" />;

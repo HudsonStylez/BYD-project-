@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MapPin, Users, Heart, Gift, ExternalLink, ShieldCheck, MailWarning, Compass, ShieldAlert, Copy, RefreshCw, Eye, EyeOff, Award, CheckCircle, Clock, Lock, Video, Flame, Shield, Monitor, Camera, Wallet, CreditCard, ArrowUpRight, Ship, Anchor, Upload, FileText, Settings, Download, Sparkles, Smile, MessageSquare, ArrowRight } from "lucide-react";
+import { MapPin, Users, Heart, Gift, ExternalLink, ShieldCheck, MailWarning, Compass, ShieldAlert, Copy, RefreshCw, Eye, EyeOff, Award, CheckCircle, Clock, Lock, Video, Flame, Shield, Monitor, Camera, Wallet, CreditCard, ArrowUpRight, Ship, Anchor, Upload, FileText, Settings, Download, Sparkles, Smile, MessageSquare, ArrowRight, Menu } from "lucide-react";
 import { DashboardData, RewardItem } from "../types";
 
 // Import new modular custom elements
@@ -34,7 +34,7 @@ const fakeReferralsToasts = [
 ];
 
 const getAvatarUrl = (name: string) => {
-  const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hash = (name || "User").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const heads = [
     "1534528741775-53994a69daeb",
     "1506794778202-cad84cf45f1d",
@@ -237,10 +237,10 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
   // --- KYC BIOMETRICS WIZARD STATES ---
   const [kycFormExpanded, setKycFormExpanded] = useState(true);
   const [kycForm, setKycForm] = useState({
-    name: "",
-    dob: "1997-08-14",
-    nationality: "RU",
-    idNumber: "",
+    name: "Johnathan Doe (Change to your exact name)",
+    dob: "1994-11-23",
+    nationality: "US",
+    idNumber: "US-948201-X (Replace with your Passport No)",
     idFront: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'><rect width='200' height='120' fill='%231e293b' rx='8'/><text x='20' y='65' fill='%2306b6d4' font-size='10' font-family='monospace' font-weight='bold'>MOCK_ID_FRONT_DEFAULT</text></svg>",
     idBack: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'><rect width='200' height='120' fill='%231e293b' rx='8'/><text x='20' y='65' fill='%2306b6d4' font-size='10' font-family='monospace' font-weight='bold'>MOCK_ID_BACK_SIGNATURE</text></svg>",
     addressProof: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'><rect width='200' height='120' fill='%231e293b' rx='8'/><text x='20' y='65' fill='%2306b6d4' font-size='10' font-family='monospace' font-weight='bold'>MOCK_ADDRESS_PROOF_BILL</text></svg>",
@@ -448,7 +448,7 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
     const startLat = 33.7431;
     const startLng = -118.2673; // Port of LA
     
-    const uCity = data.user.city.toLowerCase();
+    const uCity = (data.user.city || "").toLowerCase();
     const endLat = uCity.includes("seattle") ? 47.6062 :
                  uCity.includes("new york") ? 40.7128 :
                  uCity.includes("san francisco") ? 37.7749 :
@@ -798,10 +798,11 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
             <button
               id="menu-toggle-trigger"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="py-1.5 px-3 bg-slate-950 border border-slate-850 hover:border-cyan-500/30 text-[9px] font-mono font-bold text-slate-400 hover:text-cyan-300 rounded-lg flex items-center space-x-1.5 transition duration-150 cursor-pointer"
+              className="py-2.5 px-5 bg-[#0e1629] border border-cyan-500/50 hover:border-cyan-400 hover:bg-cyan-500/10 text-xs font-mono font-black text-cyan-300 hover:text-cyan-205 rounded-xl flex items-center space-x-2 transition-all duration-300 shadow-lg shadow-cyan-500/10 cursor-pointer hover:scale-105 active:scale-95"
             >
-              <span>{menuOpen ? "COLLAPSE" : "MENU"}</span>
-              <span className="text-cyan-400">{menuOpen ? "▲" : "▼"}</span>
+              <Menu className="w-3.5 h-3.5 text-cyan-405 animate-pulse" />
+              <span className="tracking-widest">{menuOpen ? "CLOSE PANEL" : "DECK MENU"}</span>
+              <span className="text-cyan-400 text-[10px]">{menuOpen ? "▲" : "▼"}</span>
             </button>
           </div>
 
@@ -968,8 +969,8 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
         {/* Dashboard Main display portal */}
         <div className="lg:col-span-9 space-y-6">
 
-          {/* Presidential Post-KYC First-time Onboarding Guide */}
-          {data && data.user && data.user.kyc_status === "verified" && !guideFinished && (
+          {/* Professional First-time Onboarding & Feature Guide */}
+          {data && data.user && !guideFinished && (
             <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 relative overflow-hidden shadow-xl animate-fade-in text-left">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500" />
               
@@ -980,10 +981,10 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-white uppercase tracking-tight font-display flex items-center space-x-1.5">
-                      <span>✓ BIOMETRIC CLEARANCE PASSED</span>
-                      <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-0.5 px-2 rounded-full font-mono">Verified Member</span>
+                      <span>🧭 DOCKYARD WALKTHROUGH GUIDE</span>
+                      <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-0.5 px-2 rounded-full font-mono">First-Time User Guide</span>
                     </h4>
-                    <p className="text-[10px] text-slate-400 font-mono">Horizon Club Telematics Network Walkthrough Guide</p>
+                    <p className="text-[10px] text-slate-400 font-mono font-bold uppercase">Horizon Club Telematics Network walk-map</p>
                   </div>
                 </div>
 
@@ -999,102 +1000,130 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
                 
                 {/* Step options navigation (left) */}
-                <div className="md:col-span-4 flex flex-col space-y-2">
+                <div className="md:col-span-4 flex flex-col space-y-2 text-left">
                   <span className="text-[9px] uppercase font-mono tracking-widest text-slate-500 font-bold block mb-1">Guided Explorer</span>
                   
                   <button 
+                    type="button"
                     onClick={() => setGuideStep(0)}
                     className={`py-2 px-3 text-left rounded-xl text-xs font-mono font-semibold transition cursor-pointer ${guideStep === 0 ? "bg-slate-950 border border-emerald-500/30 text-emerald-400" : "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`}
                   >
-                    1. 📍 Tracking Maps
+                    1. 🧭 Navigation & Starting
                   </button>
 
                   <button 
+                    type="button"
                     onClick={() => setGuideStep(1)}
                     className={`py-2 px-3 text-left rounded-xl text-xs font-mono font-semibold transition cursor-pointer ${guideStep === 1 ? "bg-slate-950 border border-emerald-500/30 text-emerald-400" : "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`}
                   >
-                    2. 📹 HD Webcams
+                    2. 📊 Shipping Tracker GPS
                   </button>
 
                   <button 
+                    type="button"
                     onClick={() => setGuideStep(2)}
                     className={`py-2 px-3 text-left rounded-xl text-xs font-mono font-semibold transition cursor-pointer ${guideStep === 2 ? "bg-slate-950 border border-emerald-500/30 text-emerald-400" : "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`}
                   >
-                    3. 💎 Claim & Rewards
+                    3. 🚗 Fleet Rentals & Rates
                   </button>
 
                   <button 
+                    type="button"
                     onClick={() => setGuideStep(3)}
                     className={`py-2 px-3 text-left rounded-xl text-xs font-mono font-semibold transition cursor-pointer ${guideStep === 3 ? "bg-slate-950 border border-emerald-500/30 text-emerald-400" : "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`}
                   >
-                    4. 💼 Secure Settlement
+                    4. 💵 VIP Currency Rewards
+                  </button>
+
+                  <button 
+                    type="button"
+                    onClick={() => setGuideStep(4)}
+                    className={`py-2 px-3 text-left rounded-xl text-xs font-mono font-semibold transition cursor-pointer ${guideStep === 4 ? "bg-slate-950 border border-emerald-500/30 text-emerald-400" : "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800"}`}
+                  >
+                    5. 🌸 Foster Sponsorships
                   </button>
                 </div>
 
                 {/* Active step display panel (right) */}
                 <div className="md:col-span-8 bg-slate-950 border border-slate-850 p-5 rounded-2xl flex flex-col justify-between space-y-4">
                   {guideStep === 0 && (
-                    <div className="space-y-2 animate-fade-in">
-                      <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest">MODULE STATE 01</span>
+                    <div className="space-y-2 animate-fade-in text-left">
+                      <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest font-bold">STEP 1 OF 5: DECK OVERVIEW</span>
                       <h5 className="font-display font-bold text-[#F5F5F0] text-sm flex items-center gap-1.5">
-                        <span>Interactive Global Tracking Map Terminal</span>
+                        <span>How to Begin & App Layout Guide</span>
                       </h5>
                       <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                        Your container freighter status is updated live via real-time satellite GPS systems. You can locate vehicle transits accurately from original loading ports right down to your regional custom clearing yards.
+                        Welcome to BYD Horizon Club! To get started immediately, use the <strong>Menu Toggle</strong> at the top right of your dashboard to switch panels. Select vehicles in the <strong>Showroom Showcase</strong> to add them to your reservation queue, fill out your KYC form on top of the home stream, and keep checkin histories to accumulate bonuses.
                       </p>
                       <div className="text-[10px] p-2 bg-slate-900 border border-slate-850 rounded-xl leading-relaxed text-slate-400 font-mono">
-                        💡 Click <strong className="text-white">"Expedite Logistics Node"</strong> to bypass cargo delays or clearance holds using Points or settle top-up dues of $49 USDT.
+                        💡 Click <strong className="text-white font-bold">"Fleet Showroom"</strong> on the main menu toggle to select co-ownership options.
                       </div>
                     </div>
                   )}
 
                   {guideStep === 1 && (
-                    <div className="space-y-2 animate-fade-in">
-                      <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-widest">MODULE STATE 02</span>
+                    <div className="space-y-2 animate-fade-in text-left">
+                      <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-bold">STEP 2 OF 5: LOGISTICS</span>
                       <h5 className="font-display font-bold text-[#F5F5F0] text-sm flex items-center gap-1.5">
-                        <span>High-Definition Harbor Telepresence Grid</span>
+                        <span>Monitoring & Tracking Investments</span>
                       </h5>
                       <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                        Complete remote telepresence connects you straight into our deep-water loading harbors, custom holding facilities, and regional distribution hub yards. Watch electric vehicle transits securely.
+                        Any confirmed vehicle purchase is logged inside the live telemetry database. Navigate to the <strong>"Live GPS Tracker"</strong> menu view to monitor shipment progression from initial departure harbor docks, open ocean courses, regional terminals, and custom clearing hub checkpoints, updated with actual geographic coordinates.
                       </p>
                       <div className="text-[10px] p-2 bg-slate-900 border border-slate-850 rounded-xl leading-relaxed text-slate-400 font-mono">
-                        💡 Switch between harbor feeds and deck cameras on the <strong className="text-white">"Live Telepresence Grid"</strong> menu.
+                        💡 Use <strong className="text-white font-bold">"Expedite Logistics Node"</strong> on the tracking dashboard to speed up transit times.
                       </div>
                     </div>
                   )}
 
                   {guideStep === 2 && (
-                    <div className="space-y-2 animate-fade-in">
-                      <span className="text-[9px] font-mono text-amber-400 uppercase tracking-widest">MODULE STATE 03</span>
+                    <div className="space-y-2 animate-fade-in text-left">
+                      <span className="text-[9px] font-mono text-amber-400 uppercase tracking-widest font-bold">STEP 3 OF 5: FLEET RENTAL</span>
                       <h5 className="font-display font-bold text-[#F5F5F0] text-sm flex items-center gap-1.5">
-                        <span>Horizon Points Claim & Redemption Hub</span>
+                        <span>Rental recommendations & Pricing Scale</span>
                       </h5>
                       <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                        Earn 10 dynamic Horizon Points on every dollar spent. Convert these anytime inside our premium catalogs for zero-fee lifestyles, performance upgrades, accessories, or escrow top-ups.
+                        Need temporary mobility? Our system dynamically organizes model categories to match your occupancy, travel duration, and terrain. Rental rates are set per 24 hours (BYD Dolphin Mini: $35/day, BYD Atto: $69/day, BYD Seal Track: $125/day, Yangwang U8 Overland: $349/day). Choose any term under the <strong>"Fleet Rental"</strong> tab.
                       </p>
                       <div className="text-[10px] p-2 bg-slate-900 border border-slate-850 rounded-xl leading-relaxed text-slate-400 font-mono">
-                        💡 Go to the <strong className="text-white">"Points Rewards Store"</strong> to browse list of claimable logistics items directly.
+                        💡 Active rentals can be settled instantly from your pre-funded secure profile wallet.
                       </div>
                     </div>
                   )}
 
                   {guideStep === 3 && (
-                    <div className="space-y-2 animate-fade-in">
-                      <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest">MODULE STATE 04</span>
+                    <div className="space-y-2 animate-fade-in text-left">
+                      <span className="text-[9px] font-mono text-pink-400 uppercase tracking-widest font-bold">STEP 4 OF 5: BOUNTIES</span>
                       <h5 className="font-display font-bold text-[#F5F5F0] text-sm flex items-center gap-1.5">
-                        <span>Secured Escrow & Customs Top-ups</span>
+                        <span>VIP Profit & Loyalty Reward Cash</span>
                       </h5>
                       <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                        Add liquidity top-up balances seamlessly inside the secured SQLite ledger using your encrypted wallet addresses (USDT TRC20/ERC20). All transactions are fully hashed inside the audit database columns.
+                        The points system acts as direct cash back (Reward Cash) on your co-ownership portfolio. The balance renders dynamically converted to your preferred primary currency (USD, EUR, GBP) using our live conversion nodes. Points can only be granted directly by club administrators for active ecosystem participation or system bonuses.
                       </p>
                       <div className="text-[10px] p-2 bg-slate-900 border border-slate-850 rounded-xl leading-relaxed text-slate-400 font-mono">
-                        💡 Provide your <strong className="text-white">Crypto Wallet Address</strong> inside Settings to enable fast, secure payouts and claim credits.
+                        💡 View your balance breakdown on the profile banner. Balance hiding hashes protect data completely.
+                      </div>
+                    </div>
+                  )}
+
+                  {guideStep === 4 && (
+                    <div className="space-y-2 animate-fade-in text-left">
+                      <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest font-bold">STEP 5 OF 5: CHARITY PROGRAM</span>
+                      <h5 className="font-display font-bold text-[#F5F5F0] text-sm flex items-center gap-1.5">
+                        <span>foster Sponsorship Donations Centre</span>
+                      </h5>
+                      <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                        Settle direct community foster home sponsorships under the <strong>"Donation Centre"</strong>. Sponsoring foster care helps support children education, nutrition, and safe boarding structures globally. Secure wallet deposit links (USDT, BTC) and standard card payment methods are available. Sponsoring community causes builds noble reputation logs.
+                      </p>
+                      <div className="text-[10px] p-2 bg-slate-900 border border-slate-850 rounded-xl leading-relaxed text-slate-400 font-mono">
+                        💡 Submitting foster donations adds verified goodwill credits and qualifies your profile for VIP promotions.
                       </div>
                     </div>
                   )}
 
                   <div className="flex justify-between items-center pt-3 border-t border-slate-900">
                     <button 
+                      type="button"
                       disabled={guideStep === 0}
                       onClick={() => setGuideStep(p => p - 1)}
                       className="px-3 py-1 bg-slate-900 border border-slate-850 text-slate-400 hover:text-white rounded-lg text-[10px] font-mono disabled:opacity-40 select-none cursor-pointer"
@@ -1102,14 +1131,15 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
                       ◀ Previous
                     </button>
 
-                    <div className="flex gap-1 select-none">
-                      {[0, 1, 2, 3].map(idx => (
+                    <div className="flex gap-1 select-none font-mono">
+                      {[0, 1, 2, 3, 4].map(idx => (
                         <span key={idx} className={`w-1.5 h-1.5 rounded-full transition-all ${idx === guideStep ? "bg-emerald-400 w-3" : "bg-slate-700"}`} />
                       ))}
                     </div>
 
-                    {guideStep === 3 ? (
+                    {guideStep === 4 ? (
                       <button 
+                        type="button"
                         onClick={handleFinishGuide}
                         className="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg text-[10px] font-mono font-bold select-none cursor-pointer"
                       >
@@ -1117,6 +1147,7 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
                       </button>
                     ) : (
                       <button 
+                        type="button"
                         onClick={() => setGuideStep(p => p + 1)}
                         className="px-3 py-1 bg-slate-900 border border-slate-850 text-slate-400 hover:text-white rounded-lg text-[10px] font-mono select-none cursor-pointer"
                       >
@@ -1153,11 +1184,26 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
 
                 <button
                   onClick={() => setKycFormExpanded(!kycFormExpanded)}
-                  className="px-3 py-1 bg-white/5 hover:bg-white/10 text-[10px] rounded border border-white/10 text-slate-300 font-mono"
+                  className="px-3 py-1.5 bg-red-600/10 hover:bg-red-600/20 text-red-400 text-[10px] rounded-lg border border-red-500/20 font-mono font-bold transition cursor-pointer"
                 >
-                  {kycFormExpanded ? "Collapse Block [-]" : "Expand Block [+]"}
+                  {kycFormExpanded ? "Collapse Compliance Box" : "Expand Compliance Box"}
                 </button>
               </div>
+
+              {!kycFormExpanded && (
+                <div className="p-3 bg-red-500/5 border border-red-500/10 rounded-xl flex items-center justify-between text-[11px] text-slate-350 font-sans leading-relaxed animate-fade-in text-left">
+                  <span className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping shrink-0" />
+                    <span>⚠️ <strong>Security Advisory holding:</strong> Standard access restricted. Please select <strong>"Expand Compliance Box"</strong> to fill your legal details and complete verification.</span>
+                  </span>
+                  <button 
+                    onClick={() => setKycFormExpanded(true)}
+                    className="ml-4 shrink-0 px-2 py-1 bg-red-600/90 text-white font-mono text-[9px] font-bold rounded hover:bg-red-555 uppercase tracking-wide transition"
+                  >
+                    Open Form
+                  </button>
+                </div>
+              )}
 
               {kycFormExpanded && (
                 <div className="space-y-4 text-xs">
@@ -1189,41 +1235,50 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
                     )}
 
                     {data.user.kyc_status !== "pending" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
                           <div>
-                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1">Full Legal Name (as in Passport) *</label>
+                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1 font-bold">Full Legal Name (as in Passport/ID) *</label>
                             <input
                               type="text"
                               required
                               value={kycForm.name}
                               onChange={e => setKycForm(p => ({ ...p, name: e.target.value }))}
-                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
+                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2.5 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
                               placeholder="Johnathan Doe"
                             />
+                            <p className="text-[8px] text-slate-500 mt-1 font-sans">
+                              👉 Enter your exact name as printed on legal documents. Change default mockup data before submit.
+                            </p>
                           </div>
 
                           <div>
-                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1">Date of Birth *</label>
+                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1 font-bold">Date of Birth *</label>
                             <input
                               type="date"
                               required
                               value={kycForm.dob}
                               onChange={e => setKycForm(p => ({ ...p, dob: e.target.value }))}
-                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
+                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2.5 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
                             />
+                            <p className="text-[8px] text-slate-500 mt-1 font-sans">
+                              👉 Minimum regulatory compliance age is 18 years old.
+                            </p>
                           </div>
 
                           <div>
-                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1">Identity Document / Passport Number *</label>
+                            <label className="block text-[10px] text-slate-400 uppercase font-mono mb-1 font-bold">Identity Document / Passport Number *</label>
                             <input
                               type="text"
                               required
                               placeholder="US-738201-9"
                               value={kycForm.idNumber}
                               onChange={e => setKycForm(p => ({ ...p, idNumber: e.target.value }))}
-                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
+                              className="w-full bg-slate-950 border border-slate-800 px-3 py-2.5 rounded-xl text-white font-mono focus:border-red-500/40 outline-none text-xs"
                             />
+                            <p className="text-[8px] text-slate-500 mt-1 font-sans">
+                              👉 Ensure correct alphanumeric formatting. Fill your real ID number.
+                            </p>
                           </div>
 
                           <div className="pt-2">
@@ -1237,99 +1292,40 @@ export default function UserDashboard({ authToken, onNavigate }: UserDashboardPr
                           </div>
                         </div>
 
-                        {/* Interactive Selfie Biometric Box */}
-                        <div className="bg-slate-950 border border-slate-850 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[220px]">
-                          <span className="text-[10px] text-slate-400 uppercase font-mono tracking-wider mb-2 text-center block w-full">Biometric Video Stream Channel</span>
-                          
-                          <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-red-500/20 relative flex items-center justify-center bg-slate-900 shadow-inner">
-                            {kycSelfie ? (
-                              <img src={kycSelfie} alt="Bio Selfie" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                            ) : kycWebcamActive ? (
-                              kycVideoStream ? (
-                                <video 
-                                  id="dashboard-webcam" 
-                                  className="w-full h-full object-cover" 
-                                  autoPlay 
-                                  playsInline 
-                                  muted 
-                                  ref={el => {
-                                    if (el && kycVideoStream) el.srcObject = kycVideoStream;
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gradient-to-b from-slate-950 to-slate-900 flex flex-col items-center justify-center p-2 text-center relative">
-                                  <div className="absolute inset-0 border border-emerald-500/30 rounded-full animate-ping pointer-events-none" />
-                                  <Camera className="w-5 h-5 text-emerald-400 animate-pulse mb-1" />
-                                  <span className="text-[7px] font-mono text-cyan-300 uppercase animate-pulse">Liveness Scan-Active</span>
-                                  <span className="text-[5px] font-mono text-slate-500 block leading-tight mt-0.5">SECURE SANDBOX SIMULATOR</span>
-                                </div>
-                              )
-                            ) : (
-                              <div className="flex flex-col items-center justify-center text-slate-500">
-                                <Video className="w-6 h-6 text-slate-600 mb-1" />
-                                <span className="text-[8px] uppercase tracking-wider font-mono">Offline</span>
-                              </div>
-                            )}
+                        {/* Informational Guidance Manual (Replacer of Biometric selfie box) */}
+                        <div className="bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-850 rounded-2xl p-5 flex flex-col justify-between space-y-4 text-left">
+                          <div>
+                            <h4 className="text-[10px] text-red-400 uppercase font-mono tracking-wider font-extrabold flex items-center gap-1.5">
+                              <ShieldAlert className="w-3.5 h-3.5 text-red-400 animate-pulse" />
+                              Compliance Guide: KYC Verification Guidelines
+                            </h4>
+                            <ul className="mt-3.5 space-y-2.5 text-[10px] text-slate-400 font-sans leading-normal">
+                              <li className="flex items-start gap-1.5">
+                                <span className="text-red-500 shrink-0">•</span>
+                                <span>
+                                  <strong>Document Validity:</strong> Passports and Identity cards must have at least 6 months of valid life sequence remaining.
+                                </span>
+                              </li>
+                              <li className="flex items-start gap-1.5">
+                                <span className="text-red-500 shrink-0">•</span>
+                                <span>
+                                  <strong>Placeholder Data Notice:</strong> The input fields contain preloaded mock default parameters. You <strong className="text-white">MUST rewrite</strong> them with your authentic details before committing parameters.
+                                </span>
+                              </li>
+                              <li className="flex items-start gap-1.5">
+                                <span className="text-red-500 shrink-0">•</span>
+                                <span>
+                                  <strong>Required Uploads:</strong> Selecting files in the slots below is required to pass verification criteria. Drag-and-drop or select authentic scan attachments.
+                                </span>
+                              </li>
+                            </ul>
                           </div>
 
-                          <div className="mt-3 flex space-x-2 w-full justify-center font-sans">
-                            {!kycSelfie ? (
-                              !kycWebcamActive ? (
-                                <button
-                                  type="button"
-                                  onClick={async () => {
-                                    setKycWebcamActive(true);
-                                    try {
-                                      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                                      setKycVideoStream(stream);
-                                    } catch {
-                                      // Fallback elegantly handled via secure visual simulator
-                                    }
-                                  }}
-                                  className="px-3 py-1.5 bg-slate-900 hover:bg-slate-850 text-slate-300 font-mono text-[9px] uppercase font-bold rounded border border-white/5 flex items-center space-x-1.5 justify-center cursor-pointer"
-                                >
-                                  <Camera className="w-3 h-3 text-cyan-400" />
-                                  <span>Start Local Webcam</span>
-                                </button>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const videoEl = document.getElementById("dashboard-webcam") as HTMLVideoElement;
-                                    if (videoEl && kycVideoStream) {
-                                      const canvas = document.createElement("canvas");
-                                      canvas.width = videoEl.videoWidth || 640;
-                                      canvas.height = videoEl.videoHeight || 480;
-                                      const ctx = canvas.getContext("2d");
-                                      if (ctx) {
-                                        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-                                        setKycSelfie(canvas.toDataURL("image/jpeg"));
-                                      }
-                                      kycVideoStream.getTracks().forEach(t => t.stop());
-                                      setKycVideoStream(null);
-                                      setKycWebcamActive(false);
-                                    } else {
-                                      // generate beautifully styled face fallback profile for secure sandbox environment
-                                      setKycSelfie("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='#0f172a' stroke='#10b981' stroke-width='2'/><path d='M50 30a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M25 75c0-12 12-16 25-16s25 4 25 16' fill='none' stroke='#10b981' stroke-width='2'/></svg>");
-                                      setKycWebcamActive(false);
-                                    }
-                                  }}
-                                  className="px-3 py-1.5 bg-red-650 hover:bg-red-600 text-white font-mono text-[9px] uppercase font-bold rounded border border-red-500/30 cursor-pointer"
-                                >
-                                  Capture Biometric Frame
-                                </button>
-                              )
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setKycSelfie("");
-                                }}
-                                className="px-3 py-1.5 bg-slate-900 text-red-400 font-mono text-[9px] uppercase font-bold rounded border border-white/5 cursor-pointer"
-                              >
-                                Reset Captured Frame
-                              </button>
-                            )}
+                          <div className="bg-[#1c1212]/45 border border-red-950/20 p-3.5 rounded-xl space-y-1">
+                            <span className="text-[9px] uppercase font-mono tracking-widest text-red-405 font-black block">Liveness Check Status</span>
+                            <p className="text-[10px] text-slate-400 leading-tight">
+                              Liveness webcam video check bypassed. Submission requires verified documentation files only.
+                            </p>
                           </div>
                         </div>
 

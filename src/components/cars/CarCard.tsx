@@ -134,7 +134,7 @@ export const CarCard: React.FC<CarCardProps> = ({
                 <Zap className="w-3.5 h-3.5" />
                 <span className="text-[10px] uppercase tracking-wider text-white/40 font-mono">Size</span>
               </div>
-              <span className="text-xs text-white font-medium truncate max-w-[50px]">{car.specs?.batteryKwh.split(" ")[0] || "N/A"}</span>
+              <span className="text-xs text-white font-medium truncate max-w-[50px]">{car.specs?.batteryKwh?.split(" ")[0] || "N/A"}</span>
             </div>
           </div>
         </div>
