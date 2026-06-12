@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: byd-horizon-club
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: node server.ts
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
