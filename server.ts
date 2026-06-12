@@ -2855,6 +2855,12 @@ async function startServer() {
     });
   }
 
+// Serves the static files from our React frontend build
+app.use(express.static(path.join(__dirname, 'dist')));
+// The "catch-all" route: for any request not caught by your API, send the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`BYD Horizon Club server active on Node-Port http://0.0.0.0:${PORT}`);
   });
